@@ -1,0 +1,69 @@
+name: Auto Tag for Alauda
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - "alauda-v*"
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    name: auto-tag-alauda
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Derive Alauda tag prefix from branch
+        id: derive
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch_name="${GITHUB_REF#refs/heads/}"
+          if [[ ! "$branch_name" =~ ^alauda-v([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+            echo "Unexpected branch format: $branch_name"
+            echo "Expected format: alauda-vX.Y.Z"
+            exit 1
+          fi
+
+          base_version="v${BASH_REMATCH[1]}"
+          tag_prefix="${base_version}-alauda"
+
+          echo "base_version=$base_version" >> "$GITHUB_OUTPUT"
+          echo "tag_prefix=$tag_prefix" >> "$GITHUB_OUTPUT"
+
+      - name: Compute next Alauda tag
+        id: next
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag_prefix="${{ steps.derive.outputs.tag_prefix }}"
+          existing_tags=$(git tag --list "${tag_prefix}-*" | sort -V)
+
+          max_index=-1
+          for tag in $existing_tags; do
+            index="${tag##*-}"
+            if [[ "$index" =~ ^[0-9]+$ ]] && (( index > max_index )); then
+              max_index="$index"
+            fi
+          done
+
+          next_index=$((max_index + 1))
+          new_tag="${tag_prefix}-${next_index}"
+          echo "new_tag=$new_tag" >> "$GITHUB_OUTPUT"
+
+      - name: Create and push tag
+        run: |
+          set -euo pipefail
+          new_tag="${{ steps.next.outputs.new_tag }}"
+          git tag "$new_tag"
+          git push origin "$new_tag"
