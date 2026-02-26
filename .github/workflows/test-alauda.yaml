@@ -1,0 +1,51 @@
+name: Crane Test For Alauda
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - "alauda-v*"
+  pull_request:
+    branches:
+      - "alauda-v*"
+
+jobs:
+  build-crane:
+    name: build-crane
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - name: Build and compile-test crane packages
+        run: |
+          set -euo pipefail
+          go build ./cmd/crane
+          go test -run=^$ ./cmd/crane/... ./pkg/crane/...
+
+  unit-tests-crane:
+    name: unit-tests-crane
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - name: Run crane unit tests with race detector
+        run: |
+          set -euo pipefail
+          go test -coverprofile=coverage-crane.txt -covermode=atomic -race ./cmd/crane/... ./pkg/crane/...
+
+  rebase-test-script:
+    name: rebase-test-script
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - name: Run crane rebase integration script
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./cmd/crane/rebase_test.sh

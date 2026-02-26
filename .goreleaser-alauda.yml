@@ -1,0 +1,54 @@
+project_name: crane-alauda
+
+builds:
+  - id: crane
+    env:
+      - CGO_ENABLED=0
+      - GODEBUG="http2server=0"
+      - GOFLAGS=-buildvcs=false
+    main: ./cmd/crane/main.go
+    binary: crane
+    flags:
+      - -trimpath
+    ldflags:
+      - -s
+      - -w
+      - -X github.com/google/go-containerregistry/cmd/crane/cmd.Version={{.Version}}
+      - -X github.com/google/go-containerregistry/pkg/v1/remote/transport.Version={{.Version}}
+    goarch:
+      - amd64
+      - arm64
+    goos:
+      - linux
+
+source:
+  enabled: true
+
+archives:
+  - name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end -}}
+
+checksum:
+  name_template: checksums.txt
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+
+release:
+  name_template: "{{.Tag}}"
+  footer: |
+    ### Alauda Derived crane Binary
+
+    This release is built from Alauda branch/tag based on upstream community version.

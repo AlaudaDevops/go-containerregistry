@@ -1,0 +1,16 @@
+name: Release Alauda
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    tags:
+      - "v*-alauda-*"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release-alauda:
+    name: release-alauda
+    uses: ./.github/workflows/reusable-release-alauda.yaml
