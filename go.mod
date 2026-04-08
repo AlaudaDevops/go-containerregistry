@@ -1,6 +1,6 @@
 module github.com/google/go-containerregistry
 
-go 1.26.1
+go 1.26.2
 
 require (
 	github.com/containerd/stargz-snapshotter/estargz v0.18.1
@@ -55,3 +55,5 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gotest.tools/v3 v3.0.3 // indirect
 )
+
+replace github.com/docker/docker => github.com/moby/moby v28.5.3-0.20260325154711-31a1689cb0a1+incompatible
