@@ -1,6 +1,6 @@
 module github.com/google/go-containerregistry/cmd/krane
 
-go 1.24.0
+go 1.26.2
 
 replace github.com/google/go-containerregistry => ../../
 
@@ -11,7 +11,7 @@ require (
 )
 
 require (
-	cloud.google.com/go/compute/metadata v0.7.0 // indirect
+	cloud.google.com/go/compute/metadata v0.9.0 // indirect
 	github.com/Azure/azure-sdk-for-go v68.0.0+incompatible // indirect
 	github.com/Azure/go-autorest v14.2.0+incompatible // indirect
 	github.com/Azure/go-autorest/autorest v0.11.30 // indirect
@@ -38,7 +38,7 @@ require (
 	github.com/aws/smithy-go v1.23.2 // indirect
 	github.com/containerd/stargz-snapshotter/estargz v0.18.1 // indirect
 	github.com/dimchansky/utfbom v1.1.1 // indirect
-	github.com/docker/cli v29.0.3+incompatible // indirect
+	github.com/docker/cli v29.2.0+incompatible // indirect
 	github.com/docker/distribution v2.8.3+incompatible // indirect
 	github.com/docker/docker-credential-helpers v0.9.4 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
@@ -53,8 +53,8 @@ require (
 	github.com/spf13/pflag v1.0.9 // indirect
 	github.com/vbatts/tar-split v0.12.2 // indirect
 	golang.org/x/crypto v0.45.0 // indirect
-	golang.org/x/oauth2 v0.33.0 // indirect
-	golang.org/x/sync v0.18.0 // indirect
-	golang.org/x/sys v0.38.0 // indirect
+	golang.org/x/oauth2 v0.35.0 // indirect
+	golang.org/x/sync v0.20.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
 	gotest.tools/v3 v3.1.0 // indirect
 )
