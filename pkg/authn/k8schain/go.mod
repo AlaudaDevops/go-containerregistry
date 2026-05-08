@@ -1,6 +1,6 @@
 module github.com/google/go-containerregistry/pkg/authn/k8schain
 
-go 1.26.2
+go 1.26.3
 
 replace (
 	github.com/google/go-containerregistry => ../../../
