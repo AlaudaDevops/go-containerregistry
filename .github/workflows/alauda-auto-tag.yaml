@@ -30,16 +30,29 @@ jobs:
         run: |
           set -euo pipefail
           branch_name="${GITHUB_REF#refs/heads/}"
-          if [[ ! "$branch_name" =~ ^alauda-v([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+          if [[ ! "$branch_name" =~ ^alauda-v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
             echo "Unexpected branch format: $branch_name"
             echo "Expected format: alauda-vX.Y.Z"
             exit 1
           fi
 
-          base_version="v${BASH_REMATCH[1]}"
-          tag_prefix="${base_version}-alauda"
+          major="${BASH_REMATCH[1]}"
+          minor="${BASH_REMATCH[2]}"
+          patch="${BASH_REMATCH[3]}"
+          base_version="v${major}.${minor}.${patch}"
+
+          # Bump patch by 1 so the resulting "-alauda-N" pre-release tag
+          # sorts *after* the upstream base_version under SemVer (a
+          # pre-release of vX.Y.Z is considered less than vX.Y.Z itself).
+          # Example: branch alauda-v0.21.0 -> tag prefix v0.21.1-alauda,
+          # producing v0.21.1-alauda-N which is > v0.21.0 and < v0.21.1.
+          # See yq's alauda-auto-tag.yaml for the same convention.
+          next_patch=$((patch + 1))
+          next_version="v${major}.${minor}.${next_patch}"
+          tag_prefix="${next_version}-alauda"
 
           echo "base_version=$base_version" >> "$GITHUB_OUTPUT"
+          echo "next_version=$next_version" >> "$GITHUB_OUTPUT"
           echo "tag_prefix=$tag_prefix" >> "$GITHUB_OUTPUT"
 
       - name: Compute next Alauda tag
